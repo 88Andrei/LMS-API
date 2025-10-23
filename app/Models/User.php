@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -37,6 +38,13 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function courses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class)
+            ->withPivot('role', 'progress')
+            ->withTimestamps();
+    }
 
     /**
      * Get the attributes that should be cast.
