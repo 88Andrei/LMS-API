@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -14,8 +15,8 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
-        $teacher = User::factory()->create(['role' => 'teacher']);
-        $students = User::factory()->count(5)->create(['role' => 'student']);
+        $teacher = User::factory()->create(['role' => UserRole::TEACHER->value]);
+        $students = User::factory()->count(5)->create(['role' => UserRole::STUDENT->value]);
 
         $course = Course::create([
             'title' => 'Introduction to Programming',
@@ -24,10 +25,10 @@ class CourseSeeder extends Seeder
         ]);
 
         foreach ($students as $student) {
-            $course->users()->attach($student->id, ['role' => 'student', 'progress' => rand(0, 100)]);
+            $course->users()->attach($student->id, ['role' => UserRole::STUDENT->value, 'progress' => rand(0, 100)]);
         }
 
-        $course->users()->attach($teacher->id, ['role' => 'teacher']);
+        $course->users()->attach($teacher->id, ['role' => UserRole::TEACHER->value]);
     }
 
 }

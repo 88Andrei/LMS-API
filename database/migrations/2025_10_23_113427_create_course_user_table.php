@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
-            $table->string('role')->default('student'); // student, teacher
+            $table->enum('role', UserRole::values())->default(UserRole::STUDENT->value); 
             $table->unsignedTinyInteger('progress')->nullable();
             $table->timestamps();
         });
