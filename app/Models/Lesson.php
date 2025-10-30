@@ -24,4 +24,9 @@ class Lesson extends Model
     {
         return $this->morphMany(File::class, 'fileable');
     }
+
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
 }
