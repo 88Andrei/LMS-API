@@ -27,6 +27,7 @@ class CourseResource extends JsonResource
                     'progress' => $user->pivot->progress,
                 ];
             }),
+            'lessons_count' => $this->whenCounted('lessons_count'),
             'lessons' => LessonResource::collection($this->whenLoaded('lessons')),
         ];
     }
