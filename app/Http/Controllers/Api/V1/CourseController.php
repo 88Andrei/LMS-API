@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\UserRole;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\CourseCreateRequest;
 use App\Http\Requests\CourseUpdateRequest;
 use App\Http\Resources\CourseResource;
@@ -11,12 +11,9 @@ use App\Models\Course;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-class CourseController extends Controller
+class CourseController extends ApiController
 {
-    use AuthorizesRequests;
-
     /**
      * Display a listing of the courses.
      *
@@ -43,15 +40,17 @@ class CourseController extends Controller
         $data['teacher_id'] = $teacher->id;
 
         try {
-            DB::transaction(function () use ($data, $teacher, &$course){
+            $course = DB::transaction(function () use ($data, $teacher){
                 $course = Course::create($data);
 
                 // Add the teacher to the course_user pivot table
                 $course->users()->attach($teacher->id, ['role' => UserRole::TEACHER->value]);
+                return $course;
             });
 
             return (new CourseResource($course))->response()->setStatusCode(201);
         } catch (\Exception $e) {
+            report($e);
             return response()->json(['message' => 'Failed to create course'], 500);
         }
     }
@@ -81,8 +80,10 @@ class CourseController extends Controller
 
         try {
             $course->update($request->validated());
+            $course->refresh()->load(['teacher']);
             return (new CourseResource($course))->response();
         } catch (\Exception $e) {
+            report($e);
             return response()->json(['message' => 'Failed to update course'], 500);
         }
     }
