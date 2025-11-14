@@ -6,6 +6,8 @@ use App\Http\Requests\FileUploadRequest;
 use App\Models\Course;
 use App\Models\File;
 use App\Models\Lesson;
+use App\Models\Question;
+use App\Models\Quiz;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -15,8 +17,8 @@ class FileController extends Controller
     protected $allowedTypes = [
             'course' => Course::class,
             'lesson' => Lesson::class,
-            // 'quiz' => Quiz::class,
-            // 'question' => Question::class,
+            'quiz' => Quiz::class,
+            'question' => Question::class,
         ];
 
     public function upload(FileUploadRequest $request, string $type, int $id)
